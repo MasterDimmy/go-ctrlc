@@ -40,11 +40,8 @@ func (c *CtrlC) init() {
 	c.m.Unlock()
 }
 
-func (c *CtrlC) DeferThisToWaitCtrlC(stdout bool) {
+func (c *CtrlC) DeferThisToWaitCtrlC() {
 	c.init()
-	if stdout {
-		fmt.Println("Waiting CTRL+C or ForceStopProgram")
-	}
 	for _ = range c.force_stop_whole_system {
 	}
 }
@@ -59,6 +56,10 @@ func (c *CtrlC) ForceStopProgram() {
 //when called to stop via ctrl+c or ForceStop it call stop()
 func (c *CtrlC) InterceptKill(stdout bool, stop func()) {
 	c.init()
+
+	if stdout {
+		fmt.Println("Waiting CTRL+C or ForceStopProgram")
+	}
 
 	s := make(chan os.Signal, 1)
 	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
