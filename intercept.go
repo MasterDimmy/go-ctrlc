@@ -30,6 +30,7 @@ import (
 type CtrlC struct {
 	m                       sync.Mutex
 	force_stop_whole_system chan bool
+	stopped bool
 }
 
 func (c *CtrlC) init() {
@@ -48,8 +49,11 @@ func (c *CtrlC) DeferThisToWaitCtrlC() {
 
 //stop program now
 func (c *CtrlC) ForceStopProgram() {
+	c.m.Lock()
+	defer c.m.Unlock()
 	c.init()
 	close(c.force_stop_whole_system)
+	stopped = true
 }
 
 //use  defer DeferThisToWaitCtrlC if you called InterceptKill !
@@ -81,10 +85,6 @@ func (c *CtrlC) InterceptKill(stdout bool, stop func()) {
 	if stop != nil {
 		stop()
 	}
-	func() {
-		defer func() {
-			recover()
-		}()
-		close(c.force_stop_whole_system)
-	}()
+
+	c.ForceStopProgram()
 }
