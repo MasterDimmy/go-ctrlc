@@ -53,7 +53,7 @@ func (c *CtrlC) ForceStopProgram() {
 	defer c.m.Unlock()
 	c.init()
 	close(c.force_stop_whole_system)
-	stopped = true
+	c.stopped = true
 }
 
 //use  defer DeferThisToWaitCtrlC if you called InterceptKill !
