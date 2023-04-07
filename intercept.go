@@ -49,11 +49,12 @@ func (c *CtrlC) DeferThisToWaitCtrlC() {
 
 //stop program now
 func (c *CtrlC) ForceStopProgram() {
-	c.m.Lock()
-	defer c.m.Unlock()
 	c.init()
 	close(c.force_stop_whole_system)
+
+	c.m.Lock()
 	c.stopped = true
+	c.m.Unlock()
 }
 
 //use  defer DeferThisToWaitCtrlC if you called InterceptKill !
