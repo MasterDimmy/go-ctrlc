@@ -50,10 +50,12 @@ func (c *CtrlC) DeferThisToWaitCtrlC() {
 //stop program now
 func (c *CtrlC) ForceStopProgram() {
 	c.init()
-	close(c.force_stop_whole_system)
 
 	c.m.Lock()
-	c.stopped = true
+	if c.stopped == false {
+		close(c.force_stop_whole_system)
+		c.stopped = true
+	}
 	c.m.Unlock()
 }
 
